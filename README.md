@@ -1,6 +1,6 @@
 # Keeper of the Word: The Shifting Sensorium
 
-An interactive, visually rich, arcade-style media ecology simulation game. It explores the restructuring of the human sensorium across five distinct historical and proposed technological phases of the word.
+An interactive, decision-based media ecology simulation. It explores the restructuring of the human sensorium across five distinct historical and proposed technological phases of the word.
 
 Developed for **Micah J. Miner's Media Ecology Project**.
 
@@ -41,6 +41,8 @@ After completing the game, players can review a comparative table outlining the 
 2. Open `index.html` in any modern web browser.
 3. Toggle the **SOUND ON** button in the top right to enable real-time synthesized soundscapes.
 4. Press `F11` to enter fullscreen mode for the best presentation experience.
+
+Use **90-Second Conference Mode** to jump directly to Phase V and the origination reveal. Use **Full Five-Phase Journey** to make consequential decisions about fidelity, reach, presence, circulation, and origination across all five phases.
 
 ## References
 

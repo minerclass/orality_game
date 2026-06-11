@@ -1,280 +1,305 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Keeper of the Word: The Shifting Sensorium</title>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keeper of the Word: The Shifting Sensorium</title>
+<style>
+  :root{
+    --text:#ece7dd; --dim:#98927f;
+    --good:#8fd48f; --bad:#e07a7a;
+    --accent:#e8a04c;
+    --panel:rgba(20,17,14,.78); --line:#3a352c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    color:var(--text);
+    font-family:Georgia,'Iowan Old Style',serif;
+    background:#0e0c0a;
+    overflow-x:hidden;
+    transition:background 1.6s ease;
+  }
+  body[data-env="title"], body[data-env="p0"]{background:radial-gradient(ellipse at 50% 115%, #4a2a0e 0%, #1d1510 48%, #0e0c0a 100%)}
+  body[data-env="p1"]{background:radial-gradient(ellipse at 50% -10%, #6e5f43 0%, #3c3322 40%, #181410 100%)}
+  body[data-env="p2"]{background:radial-gradient(ellipse at 50% 40%, #0e2230 0%, #081218 60%, #05090c 100%)}
+  body[data-env="p3"]{background:radial-gradient(ellipse at 30% 20%, #1c1830 0%, #14102a 45%, #0a0a16 100%)}
+  body[data-env="p4"]{background:radial-gradient(ellipse at 70% 10%, #231d3d 0%, #121024 45%, #0a0a14 100%)}
+  body[data-env="end"]{background:radial-gradient(ellipse at 50% 120%, #2c2415 0%, #15110c 55%, #0c0a08 100%)}
+  body[data-env="p0"]{--accent:#e8a04c}
+  body[data-env="p1"]{--accent:#d8b86a}
+  body[data-env="p2"]{--accent:#7fd4ff}
+  body[data-env="p3"]{--accent:#ff7eb0}
+  body[data-env="p4"]{--accent:#a78bfa}
+  body[data-env="end"]{--accent:#e8a04c}
+
+  #fx{position:fixed;inset:0;z-index:0;pointer-events:none}
+  #vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%)}
+  #scan{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity 1s;
+    background:repeating-linear-gradient(0deg,transparent 0 2px, rgba(0,0,0,.22) 2px 4px)}
+  body[data-env="p2"] #scan{opacity:1}
+  #wipe{position:fixed;inset:0;z-index:50;pointer-events:none;display:flex;align-items:center;justify-content:center;
+    background:#070605;opacity:0;transition:opacity .55s ease}
+  #wipe.on{opacity:1;pointer-events:all}
+  #wipe .wt{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);opacity:0;transform:translateY(8px);transition:all .5s .15s}
+  #wipe.on .wt{opacity:1;transform:none}
+
+  .screen{display:none;max-width:780px;margin:0 auto;padding:28px 20px 80px;min-height:100vh;position:relative;z-index:2}
+  .screen.active{display:block;animation:fadeUp .6s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+    #fx{display:none}
+  }
+
+  .eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+  h1{font-size:clamp(36px,7vw,60px);font-weight:400;line-height:1.03;margin:14px 0;text-shadow:0 0 36px rgba(232,160,76,.25)}
+  h2{font-size:clamp(22px,4vw,33px);font-weight:400;margin:8px 0 4px}
+  .sub{color:var(--dim);font-size:16.5px;line-height:1.6;max-width:58ch}
+  button{font:inherit;cursor:pointer;border:none;border-radius:8px}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn{background:var(--accent);color:#171310;padding:14px 28px;font-size:16px;transition:transform .15s,filter .15s,background .8s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+  .btn.ghost:hover{color:var(--text);border-color:var(--dim)}
+  #soundBtn{position:fixed;top:14px;right:14px;z-index:60;background:rgba(20,17,14,.7);border:1px solid var(--line);
+    color:var(--dim);padding:8px 14px;font-size:12px;font-family:ui-monospace,Menlo,monospace;letter-spacing:.12em;border-radius:999px;backdrop-filter:blur(4px)}
+  #soundBtn:hover{color:var(--text)}
+
+  .titlegrid{display:flex;gap:22px;align-items:flex-start;margin-top:26px;flex-wrap:wrap}
+  .saima{width:120px;height:120px;border-radius:50%;object-fit:cover;border:2px solid var(--line);
+    box-shadow:0 0 40px rgba(232,160,76,.25);flex:0 0 auto}
+  .titlegrid .messageframe{flex:1 1 380px;margin:0}
+
+  .hud{display:flex;gap:18px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+  .stat{flex:1 1 160px;min-width:150px}
+  .stat label{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between}
+  .stat label b{color:var(--text);font-weight:400}
+  .stat .cap{font-family:ui-monospace,Menlo,monospace;font-size:9px;color:#6d675c;margin-top:4px;letter-spacing:.06em}
+  .bar{height:7px;background:rgba(255,255,255,.07);border-radius:4px;margin-top:6px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:4px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  #fidbar i{background:linear-gradient(90deg,#c98438,#e8a04c);box-shadow:0 0 10px rgba(232,160,76,.5)}
+  #reachbar i{background:linear-gradient(90deg,#3a7a9c,#7fd4ff);box-shadow:0 0 10px rgba(127,212,255,.4)}
+  .stat.orig label b{color:var(--good)}
+  .stat.orig.none label b{color:var(--bad);text-shadow:0 0 12px rgba(224,122,122,.6);animation:authorIn .9s ease}
+  @keyframes authorIn{0%{opacity:0;transform:scale(.85)}60%{transform:scale(1.06)}100%{opacity:1;transform:none}}
+  .phasechip{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:6px 13px;white-space:nowrap;transition:color .8s;background:rgba(0,0,0,.25)}
+
+  .messageframe{
+    border:1px solid var(--line);border-radius:14px;padding:24px 26px;margin-bottom:22px;position:relative;
+    background:var(--panel);backdrop-filter:blur(6px);
+    transition:background 1.4s, border-color 1.4s, box-shadow 1.4s, color 1.4s;
+  }
+  body[data-env="p0"] .messageframe, body[data-env="title"] .messageframe{
+    box-shadow:0 0 60px rgba(232,160,76,.12), inset 0 -30px 60px rgba(232,140,40,.06)}
+  body[data-env="p1"] .messageframe{
+    background:linear-gradient(#efe6d2,#e7dabd);color:#2a2118;border-color:#b3a27c;
+    box-shadow:0 14px 50px rgba(0,0,0,.5), inset 0 0 70px rgba(180,150,90,.25)}
+  body[data-env="p1"] .messageframe .mflabel span{color:#7a6c4e}
+  body[data-env="p2"] .messageframe{
+    background:rgba(6,16,22,.85);border-color:#23404f;
+    box-shadow:0 0 50px rgba(127,212,255,.14), inset 0 0 40px rgba(127,212,255,.05)}
+  body[data-env="p2"] #message{color:#bfe6fa;text-shadow:0 0 12px rgba(127,212,255,.5)}
+  body[data-env="p3"] .messageframe{
+    background:rgba(245,246,250,.96);color:#111827;border-color:#d7d9e0;border-radius:18px;
+    font-family:-apple-system,'Segoe UI',Roboto,sans-serif;
+    box-shadow:0 18px 60px rgba(0,0,0,.55)}
+  body[data-env="p3"] .messageframe .mflabel span{color:#6b7280}
+  body[data-env="p4"] .messageframe{
+    background:rgba(20,17,38,.8);border-color:#4a3f7a;
+    box-shadow:0 0 70px rgba(167,139,250,.18), inset 0 0 50px rgba(94,234,212,.04)}
+  .messageframe .mflabel{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .messageframe .mflabel .auth{color:var(--good)}
+  .messageframe .mflabel .auth.none{color:var(--bad);animation:authorIn .8s}
+  #message{font-size:clamp(17px,2.9vw,23px);line-height:1.65;min-height:3.1em;transition:color 1.2s}
+  #message .lost{opacity:.4;text-decoration:line-through;filter:blur(.4px)}
+  #message .mut{color:var(--bad);font-style:italic}
+  #message .w-anim{display:inline-block;animation:wordDrop .8s ease both}
+  @keyframes wordDrop{from{opacity:1;filter:blur(0)}to{opacity:.4;filter:blur(.4px)}}
+  #headline{display:none;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;font-weight:800;font-size:16px;color:#dc2626;margin-bottom:10px;animation:fadeUp .6s}
+  #headline.show{display:block}
+
+  .round .prompt{font-size:17px;line-height:1.65;margin:14px 0 20px;max-width:60ch}
+  .opts{display:flex;flex-direction:column;gap:11px}
+  .opts button{
+    background:rgba(28,24,19,.8);border:1px solid var(--line);color:var(--text);text-align:left;
+    padding:16px 19px;border-radius:11px;font-size:15.5px;line-height:1.5;
+    transition:border-color .2s,transform .2s,box-shadow .2s;backdrop-filter:blur(4px);
+  }
+  .opts button:hover{border-color:var(--accent);transform:translateX(4px);box-shadow:-4px 0 18px rgba(0,0,0,.3)}
+  .opts button small{display:block;color:var(--dim);font-size:13px;margin-top:5px}
+  .opts button:disabled{opacity:.4;cursor:default;transform:none}
+  .outcome{margin-top:20px;font-size:15.5px;line-height:1.65;color:var(--dim);min-height:2.5em;max-width:60ch}
+  .outcome b{color:var(--text);font-weight:600}
+  .nextrow{margin-top:20px;display:none}
+  .nextrow.show{display:block;animation:fadeUp .5s}
+
+  .flood{display:none;margin-top:8px}
+  .flood.show{display:block;animation:fadeUp .4s}
+  .timer{font-family:ui-monospace,Menlo,monospace;font-size:13px;letter-spacing:.14em;color:#5eead4;margin-bottom:14px}
+  .timer b{font-size:20px;color:var(--text)}
+  .timer b.urgent{color:var(--bad);animation:pulse .5s infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  .variants{display:flex;flex-direction:column;gap:10px}
+  .variants button{
+    background:rgba(24,20,42,.85);border:1px solid #38335c;color:var(--text);text-align:left;padding:14px 17px;border-radius:11px;
+    font-size:14.5px;line-height:1.55;transition:border-color .15s;animation:variantIn .5s ease both;backdrop-filter:blur(4px);
+  }
+  .variants button:nth-child(2){animation-delay:.15s}
+  .variants button:nth-child(3){animation-delay:.3s}
+  .variants button:nth-child(4){animation-delay:.45s}
+  @keyframes variantIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+  .variants button:hover{border-color:#a78bfa}
+  .variants button.right{border-color:var(--good);background:rgba(28,42,28,.85)}
+  .variants button.wrong{border-color:var(--bad);background:rgba(42,28,28,.85)}
+  .variants button .vt{display:none;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;margin-top:9px}
+  .variants button.reveal .vt{display:block}
+  .vt.h{color:var(--good)} .vt.m{color:#a78bfa}
+
+  .survived{border:1px solid var(--line);border-radius:14px;padding:26px;margin:24px 0;background:var(--panel);backdrop-filter:blur(6px)}
+  .survived .sl{font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--good);margin-bottom:12px}
+  .survived .sl.none{color:var(--bad)}
+  .survived .msg{font-size:clamp(17px,2.9vw,22px);line-height:1.65}
+  .scoreline{display:flex;gap:30px;flex-wrap:wrap;margin:20px 0 6px}
+  .scoreline div{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.12em;color:var(--dim)}
+  .scoreline div b{display:block;font-size:28px;color:var(--text);font-weight:400;letter-spacing:0;margin-top:5px}
+  .scoreline div b.bad{color:var(--bad);text-shadow:0 0 16px rgba(224,122,122,.5)}
+  .scoreline div b.good{color:var(--good);text-shadow:0 0 16px rgba(143,212,143,.4)}
+  .thesis{border-left:2px solid var(--accent);padding-left:15px;margin:24px 0;font-size:15.5px;line-height:1.7;color:var(--dim);max-width:60ch}
+  .thesis em{color:var(--text)}
+  .credit{margin-top:32px;font-size:12.5px;color:#6f6a61;line-height:1.65}
+  .navrow{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+
+  table.summary{width:100%;border-collapse:collapse;margin-top:20px;font-size:13px}
+  table.summary th,table.summary td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top;line-height:1.45}
+  table.summary th{font-family:ui-monospace,Menlo,monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);font-weight:400;background:rgba(0,0,0,.3)}
+  table.summary td:first-child{color:var(--accent);white-space:nowrap}
+  .tablescroll{overflow-x:auto}
+  .sortcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:22px;backdrop-filter:blur(6px)}
+  .sortcard .counter{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--dim);letter-spacing:.15em;margin-bottom:12px}
+  .sortcard .scenario{font-size:clamp(17px,2.6vw,21px);line-height:1.55;min-height:4em}
+  .phasebtns{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px;margin-top:18px}
+  .phasebtns button{padding:12px 9px;font-size:12.5px;line-height:1.3;border-radius:8px;border:1px solid var(--line);background:rgba(30,26,21,.8);color:var(--text)}
+  .phasebtns button:hover{border-color:var(--accent)}
+  .phasebtns button.right{border-color:var(--good);background:rgba(29,36,25,.9)}
+  .phasebtns button.wrong{border-color:var(--bad);background:rgba(36,25,25,.9)}
+  .sortfeedback{margin-top:14px;font-size:14px;line-height:1.55;color:var(--dim);min-height:3em}
+  .sortfeedback b{color:var(--text)}
+  .scorebar{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--accent);letter-spacing:.1em;margin-top:8px}
+</style>
 </head>
 <body data-env="title">
-  <!-- Interactive Particle Background Canvas -->
-  <canvas id="fx"></canvas>
-  <div id="vignette"></div>
-  <div id="scan"></div>
 
-  <!-- Screen Wipe Transition -->
-  <div id="wipe">
-    <div class="wipe-content">
-      <span class="wt" id="wipetext">The Age of the Voice</span>
-      <div class="wipe-bar"></div>
+<canvas id="fx"></canvas>
+<div id="vignette"></div>
+<div id="scan"></div>
+<div id="wipe"><span class="wt" id="wipetext"></span></div>
+<button id="soundBtn" onclick="toggleSound()" aria-pressed="false">SOUND OFF</button>
+
+<!-- ============ TITLE ============ -->
+<section class="screen active" id="title">
+  <p class="eyebrow">A visual media ecology simulation</p>
+  <h1>Keeper of the Word</h1>
+  <p class="sub">One message has been entrusted to you. Carry it through five transformations of the word &mdash; from the firelight council to typographic print, broadcast television, algorithmic feeds, and generative AI. Every choice restructures your sensorium, and every medium charges for carriage. At the end, we'll see what survived &mdash; and whether anyone still stands behind it.</p>
+  <div class="titlegrid">
+    <img class="saima" src="saima.png" alt="Saima of Miller's Crossing" onerror="this.style.display='none'">
+    <div class="messageframe">
+      <div class="mflabel"><span>The entrusted message &middot; spoken by Saima of Miller's Crossing</span><span class="auth">Origination: human</span></div>
+      <div style="font-size:clamp(18px,3.1vw,24px);line-height:1.65">&ldquo;The river always returns to collect what it has lent. Carry the children high, and speak no word you will not stand behind.&rdquo;</div>
     </div>
   </div>
+  <div class="navrow">
+    <button class="btn" onclick="startConferenceMode()">90-second conference mode &rarr;</button>
+    <button class="btn ghost" onclick="startGame()">Full five-phase journey</button>
+  </div>
+  <p class="credit">Phases I&ndash;III after Walter J. Ong (1982), <em>Orality and Literacy</em>. Phases IV&ndash;V proposed by Micah J. Miner, <em>Beyond Secondary Orality: Tertiary Algorithmicity &amp; Pedagogical Friction</em>.</p>
+</section>
 
-  <!-- Global Audio Control Button -->
-  <button id="soundBtn" onclick="toggleSound()">SOUND OFF</button>
-
-  <div class="app-container">
-    <!-- ==========================================
-         SCREEN 1: TITLE SCREEN
-         ========================================== -->
-    <section class="screen active" id="titleScreen">
-      <p class="eyebrow">A Visual Media Ecology Simulation</p>
-      <h1>Keeper of the Word</h1>
-      <p class="sub">One message has been entrusted to you. Carry it through five transformations of the word &mdash; from the firelight council to typographic print, broadcast television, algorithmic feeds, and generative AI. Every choice restructures your sensorium. Can you keep the human connection alive?</p>
-      
-      <div class="messageframe title-message" style="display: flex; gap: 20px; align-items: center;">
-        <img src="saima.png" class="char-avatar" alt="Saima of Miller's Crossing" style="width: 80px; height: 80px; border-color: #e8a04c; box-shadow: 0 0 15px rgba(232, 160, 76, 0.4);">
-        <div style="flex-grow: 1;">
-          <div class="mflabel">
-            <span>The entrusted message &middot; Spoken by Saima of Miller's Crossing</span>
-            <span class="auth">Author: human</span>
-          </div>
-          <div class="quote-text">&ldquo;The river always returns to collect what it has lent. Carry the children high, and speak no word you will not stand behind.&rdquo;</div>
-        </div>
-      </div>
-
-      <div class="intro-actions">
-        <button class="btn btn-glow" onclick="startGame()">TAKE THE MESSAGE &rarr;</button>
-      </div>
-
-      <p class="credit">Phases I&ndash;III after Walter J. Ong (1982), <em>Orality and Literacy</em>. Phases IV&ndash;V proposed by Micah J. Miner, <em>Beyond Secondary Orality: Tertiary Algorithmicity &amp; Pedagogical Friction</em>.</p>
-    </section>
-
-    <!-- ==========================================
-         SCREEN 2: PLAY SCREEN
-         ========================================== -->
-    <section class="screen" id="gameScreen">
-      <!-- HUD Header -->
-      <div class="hud">
-        <div class="hud-top">
-          <span class="phasechip" id="phasechip">Phase I &middot; Primary Orality</span>
-          <span class="round-counter" id="roundCounter">Round 1 of 5</span>
-        </div>
-        
-        <div class="hud-stats-grid">
-          <!-- Stat 1: Fidelity -->
-          <div class="stat-card">
-            <div class="stat-header">
-              <label>FIDELITY</label>
-              <span class="stat-num" id="fidnum">100%</span>
-            </div>
-            <div class="bar-container" id="fidbar">
-              <div class="bar-fill" style="width: 100%;"></div>
-            </div>
-            <span class="stat-desc">Text integrity &amp; contextual meaning</span>
-          </div>
-
-          <!-- Stat 2: Reach -->
-          <div class="stat-card">
-            <div class="stat-header">
-              <label>AUDIENCE REACH</label>
-              <span class="stat-num" id="reachnum">1</span>
-            </div>
-            <div class="bar-container" id="reachbar">
-              <div class="bar-fill" style="width: 2%;"></div>
-            </div>
-            <span class="stat-desc">Scale of message propagation</span>
-          </div>
-
-          <!-- Stat 3: Author -->
-          <div class="stat-card author-card" id="authstat">
-            <div class="stat-header">
-              <label>ORIGINATION</label>
-              <span class="stat-num" id="authnum">Human</span>
-            </div>
-            <div class="author-light-container">
-              <span class="indicator-dot green" id="authindicator"></span>
-              <span class="stat-desc" id="authdesc">Embodied human consciousness</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Game Console -->
-      <div class="game-console">
-        <!-- Character Guide Banner -->
-        <div class="character-card glass-subpanel" id="characterCard">
-          <img src="saima.png" class="char-avatar" id="charAvatar" alt="Character Avatar">
-          <div class="char-info">
-            <h4 class="char-name" id="charName">Character Name</h4>
-            <p class="char-dialogue" id="charDialogue">Dialogue text...</p>
-          </div>
-        </div>
-
-        <!-- Interactive Game Viewport (Draw canvases & interactive elements here) -->
-        <div class="viewport-wrapper">
-          <div class="viewport-title" id="viewportTitle">The Memory Weaver</div>
-          <div class="game-viewport" id="gameViewport">
-            <!-- Dynamically injected visual game elements -->
-          </div>
-        </div>
-
-        <!-- The Message Visualizer Frame -->
-        <div class="messageframe game-message-frame">
-          <div class="mflabel">
-            <span>State of the Message in your Sensorium</span>
-            <span class="auth" id="authflag">Author: human</span>
-          </div>
-          <div id="headline" class="message-headline"></div>
-          <div id="messageText" class="message-body"></div>
-        </div>
-
-        <!-- Narrative & Stage Controller Panel -->
-        <div class="control-panel">
-          <h2 id="roundtitle">The Council Fire</h2>
-          <p class="prompt" id="roundprompt">No writing exists. The message survives only if minds can hold it. Catch the floating song-words to weave Saima's message before they slip into the dark.</p>
-          
-          <!-- Choices list (for setups or text inputs) -->
-          <div class="opts" id="opts"></div>
-
-          <!-- Output Feedback -->
-          <div class="outcome" id="outcome"></div>
-
-          <!-- Proceed Row -->
-          <div class="nextrow" id="nextrow">
-            <button class="btn" id="nextbtn" onclick="advance()">CONTINUE COGNITIVE JOURNEY &rarr;</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==========================================
-         SCREEN 3: FINALE SCREEN
-         ========================================== -->
-    <section class="screen" id="finaleScreen">
-      <p class="eyebrow">The Journey's End</p>
-      <h2 id="endtitle">The Word, Still Circulating</h2>
-      
-      <div class="messageframe final-message" style="display: flex; gap: 20px; align-items: center;">
-        <img src="saima.png" class="char-avatar" id="endAvatar" alt="Final Author" style="width: 80px; height: 80px;">
-        <div style="flex-grow: 1;">
-          <div class="mflabel" id="endauth">AUTHOR: NONE &middot; words stand behind no one</div>
-          <div class="message-body" id="endmessage"></div>
-        </div>
-      </div>
-
-      <div class="scoreline">
-        <div class="score-card">
-          <span class="label">FINAL FIDELITY</span>
-          <span class="val" id="endfid">85%</span>
-        </div>
-        <div class="score-card">
-          <span class="label">FINAL REACH</span>
-          <span class="val" id="endreach">45M</span>
-        </div>
-        <div class="score-card">
-          <span class="label">ORIGINATION</span>
-          <span class="val" id="endauthor">None</span>
-        </div>
-      </div>
-
-      <p class="thesis" id="endthesis">The message arrived worn. That wearing is what every medium has always charged for carriage.</p>
-      
-      <div class="thesis" style="border-color:#a78bfa; background:rgba(167,139,250,0.04)">
-        For four rounds, this simulation taught you to protect <em>fidelity</em> (the exact wording). The final round revealed a variable you were never shown: <em>origination</em>. When algorithms can produce the symbolic environment itself, a message can be word-perfect and authored by no one. What this offloading does to humanistic agency, and to the student sensorium, is the core question this research pursues.
-      </div>
-
-      <div class="navrow">
-        <button class="btn" onclick="go('deepScreen','end')">GO DEEPER: THE RESEARCH FRAMEWORK &rarr;</button>
-        <button class="btn ghost" onclick="location.reload()">CARRY THE WORD AGAIN</button>
-      </div>
-    </section>
-
-    <!-- ==========================================
-         SCREEN 4: DEEP DIVE & ACADEMIC SANDBOX
-         ========================================== -->
-    <section class="screen" id="deepScreen">
-      <p class="eyebrow">Theoretical Deep Dive</p>
-      <h2>Five Phases of the Technologized Word</h2>
-      
-      <div class="tablescroll">
-        <table class="summary">
-          <thead>
-            <tr>
-              <th>Phase</th>
-              <th>Core Technology</th>
-              <th>Media Environment</th>
-              <th>Human Role</th>
-              <th>Cognitive Consequence</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Primary Orality</td>
-              <td>Voice (Sound)</td>
-              <td>Ephemeral, face-to-face, localized</td>
-              <td>Sole creators, active dialogue</td>
-              <td>Situational, formulaic, communal mind</td>
-            </tr>
-            <tr>
-              <td>Literacy &amp; Print</td>
-              <td>Writing / Printing press</td>
-              <td>Durable, spatialized, distanced</td>
-              <td>Sole creators, individual reader</td>
-              <td>Abstract, linear, individual interiority</td>
-            </tr>
-            <tr>
-              <td>Secondary Orality</td>
-              <td>Electronic broadcast (TV/Radio)</td>
-              <td>Immediate, mass-mediated, centralized</td>
-              <td>Sole creators, mass passive audience</td>
-              <td>Scripted spontaneity, broadcast unity</td>
-            </tr>
-            <tr>
-              <td>Algorithmic Secondary</td>
-              <td>Social feeds &amp; recommendation feeds</td>
-              <td>Curated, polarized, commodified</td>
-              <td>Creators; sorting delegated to machines</td>
-              <td>Hyper-reactive, fragmented filter bubbles</td>
-            </tr>
-            <tr>
-              <td>Tertiary Algorithmicity</td>
-              <td>Generative AI (LLMs)</td>
-              <td>Synthetic, saturated, instant</td>
-              <td>Prompters/Editors; creation delegated</td>
-              <td>The Great Bypass: offloaded cognitive synthesis</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Interactive sorting game: Keeper of the Word Sort -->
-      <div class="sortcard glass-panel">
-        <div class="sort-header">
-          <h3>Interactive Sandbox Quiz: Match the Scenario</h3>
-          <span class="counter" id="sortcounter">SCENARIO 1 OF 10</span>
-        </div>
-        <p class="scenario" id="scenariotext">Loading scenario...</p>
-        <div class="phasebtns" id="phasebtns">
-          <!-- Option buttons injected by JS -->
-        </div>
-        <div class="sortfeedback" id="sortfeedback"></div>
-        <div class="scorebar-container">
-          <div class="scorebar" id="scorebar">SCORE: 0 / 0</div>
-          <button class="btn btn-glow" id="sortnext" onclick="nextScenario()" style="display:none">NEXT SCENARIO &rarr;</button>
-        </div>
-      </div>
-
-      <div class="navrow">
-        <button class="btn ghost" onclick="location.reload()">BACK TO TITLE SCREEN</button>
-      </div>
-    </section>
+<!-- ============ GAME ============ -->
+<section class="screen" id="game">
+  <div class="hud">
+    <span class="phasechip" id="phasechip"></span>
+    <div class="stat"><label>Fidelity <b id="fidnum">100</b></label><div class="bar" id="fidbar"><i style="width:100%"></i></div><div class="cap">Text integrity &amp; contextual meaning</div></div>
+    <div class="stat"><label>Reach <b id="reachnum">1</b></label><div class="bar" id="reachbar"><i style="width:2%"></i></div><div class="cap">Scale of message propagation</div></div>
+    <div class="stat orig" id="origstat"><label>Origination <b id="orignum">Human</b></label><div class="cap" id="origcap">Embodied human consciousness</div></div>
   </div>
 
-  <script src="game.js"></script>
+  <div class="messageframe">
+    <div class="mflabel"><span>State of the message in your sensorium</span><span class="auth" id="authflag">Origination: human</span></div>
+    <div id="headline"></div>
+    <div id="message"></div>
+  </div>
+
+  <div class="round">
+    <p class="eyebrow" id="roundeyebrow"></p>
+    <h2 id="roundtitle"></h2>
+    <p class="prompt" id="roundprompt"></p>
+    <div class="opts" id="opts"></div>
+    <div class="flood" id="flood">
+      <div class="timer">FIND THE HUMAN &mdash; <b id="clock">10</b> seconds</div>
+      <div class="variants" id="variants"></div>
+    </div>
+    <div class="outcome" id="outcome"></div>
+    <div class="nextrow" id="nextrow"><button class="btn" id="nextbtn" onclick="advance()">Continue &rarr;</button></div>
+  </div>
+</section>
+
+<!-- ============ FINALE ============ -->
+<section class="screen" id="finale">
+  <p class="eyebrow">The journey's end</p>
+  <h2 id="endtitle"></h2>
+  <div class="survived">
+    <div class="sl" id="endauth"></div>
+    <div class="msg" id="endmessage"></div>
+  </div>
+  <div class="scoreline">
+    <div>FINAL FIDELITY<b id="endfid"></b></div>
+    <div>FINAL REACH<b id="endreach"></b></div>
+    <div>ORIGINATION<b id="endauthor"></b></div>
+  </div>
+  <p class="thesis" id="endthesis"></p>
+  <p class="thesis" style="border-color:#a78bfa">For four rounds, this simulation taught you to protect <em>fidelity</em> &mdash; the exact wording. The final round revealed a variable you were never shown: <em>origination</em>. When algorithms can produce the symbolic environment itself, a message can be word-perfect and authored by no one. What this condition does to humanistic agency, and to the student sensorium, is an open empirical question &mdash; the core question this research pursues.</p>
+  <div class="navrow">
+    <button class="btn" onclick="go('deep','end','ember')">Go deeper: the research framework &rarr;</button>
+    <button class="btn ghost" onclick="location.href='https://minerclass.github.io/nlu_ai-ed-conference-pres26/#4'">Return to presentation</button>
+    <button class="btn ghost" onclick="location.reload()">Carry the word again</button>
+  </div>
+  <p class="credit">Framework: Miner, extending Ong (1982). micahminer.com</p>
+</section>
+
+<!-- ============ DEEP DIVE ============ -->
+<section class="screen" id="deep">
+  <p class="eyebrow">Theoretical deep dive</p>
+  <h2>Five Phases of the Technologized Word</h2>
+  <div class="tablescroll">
+  <table class="summary">
+    <thead>
+      <tr><th>Phase</th><th>Core Technology</th><th>Media Environment</th><th>Human Role</th><th>Cognitive Consequence</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Primary Orality</td><td>Voice (sound)</td><td>Ephemeral, face-to-face, localized</td><td>Sole creators, active dialogue</td><td>Situational, formulaic, communal mind</td></tr>
+      <tr><td>Literacy &amp; Print</td><td>Writing / printing press</td><td>Durable, spatialized, distanced</td><td>Sole creators, individual reader</td><td>Abstract, linear, individual interiority</td></tr>
+      <tr><td>Secondary Orality</td><td>Electronic broadcast (TV/radio)</td><td>Immediate, mass-mediated, centralized</td><td>Sole creators, mass simultaneous audience</td><td>Scripted spontaneity, broadcast unity</td></tr>
+      <tr><td>Algorithmic Secondary Orality</td><td>Social feeds &amp; recommendation systems</td><td>Curated, personalized, fragmented</td><td>Creators; circulation delegated to machines</td><td>Secondary oral, under algorithmic conditions</td></tr>
+      <tr><td>Tertiary Algorithmicity</td><td>Generative AI (LLMs)</td><td>Synthetic, saturated, instant</td><td>Optional creators; algorithms can produce and circulate</td><td>Open empirical question &mdash; the focus of this research</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="sub" style="margin-top:22px">Think you can hold the boundaries? Ten scenarios, including the hard cases at the seams between phases.</p>
+  <div class="sortcard">
+    <div class="counter" id="sortcounter"></div>
+    <div class="scenario" id="scenariotext"></div>
+    <div class="phasebtns" id="phasebtns"></div>
+    <div class="sortfeedback" id="sortfeedback"></div>
+    <div class="scorebar" id="scorebar"></div>
+  </div>
+  <div class="navrow">
+    <button class="btn" id="sortnext" onclick="nextScenario()" style="display:none">Next scenario &rarr;</button>
+    <button class="btn ghost" onclick="location.reload()">Back to title screen</button>
+  </div>
+</section>
+
+<script src="game.js"></script>
 </body>
 </html>
