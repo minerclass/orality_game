@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keeper of the Word: The Shifting Sensorium</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-env="title">
+  <!-- Interactive Particle Background Canvas -->
+  <canvas id="fx"></canvas>
+  <div id="vignette"></div>
+  <div id="scan"></div>
+
+  <!-- Screen Wipe Transition -->
+  <div id="wipe">
+    <div class="wipe-content">
+      <span class="wt" id="wipetext">The Age of the Voice</span>
+      <div class="wipe-bar"></div>
+    </div>
+  </div>
+
+  <!-- Global Audio Control Button -->
+  <button id="soundBtn" onclick="toggleSound()">SOUND OFF</button>
+
+  <div class="app-container">
+    <!-- ==========================================
+         SCREEN 1: TITLE SCREEN
+         ========================================== -->
+    <section class="screen active" id="titleScreen">
+      <p class="eyebrow">A Visual Media Ecology Simulation</p>
+      <h1>Keeper of the Word</h1>
+      <p class="sub">One message has been entrusted to you. Carry it through five transformations of the word &mdash; from the firelight council to typographic print, broadcast television, algorithmic feeds, and generative AI. Every choice restructures your sensorium. Can you keep the human connection alive?</p>
+      
+      <div class="messageframe title-message" style="display: flex; gap: 20px; align-items: center;">
+        <img src="saima.png" class="char-avatar" alt="Saima of Miller's Crossing" style="width: 80px; height: 80px; border-color: #e8a04c; box-shadow: 0 0 15px rgba(232, 160, 76, 0.4);">
+        <div style="flex-grow: 1;">
+          <div class="mflabel">
+            <span>The entrusted message &middot; Spoken by Saima of Miller's Crossing</span>
+            <span class="auth">Author: human</span>
+          </div>
+          <div class="quote-text">&ldquo;The river always returns to collect what it has lent. Carry the children high, and speak no word you will not stand behind.&rdquo;</div>
+        </div>
+      </div>
+
+      <div class="intro-actions">
+        <button class="btn btn-glow" onclick="startGame()">TAKE THE MESSAGE &rarr;</button>
+      </div>
+
+      <p class="credit">Phases I&ndash;III after Walter J. Ong (1982), <em>Orality and Literacy</em>. Phases IV&ndash;V proposed by Micah J. Miner, <em>Beyond Secondary Orality: Tertiary Algorithmicity &amp; Pedagogical Friction</em>.</p>
+    </section>
+
+    <!-- ==========================================
+         SCREEN 2: PLAY SCREEN
+         ========================================== -->
+    <section class="screen" id="gameScreen">
+      <!-- HUD Header -->
+      <div class="hud">
+        <div class="hud-top">
+          <span class="phasechip" id="phasechip">Phase I &middot; Primary Orality</span>
+          <span class="round-counter" id="roundCounter">Round 1 of 5</span>
+        </div>
+        
+        <div class="hud-stats-grid">
+          <!-- Stat 1: Fidelity -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <label>FIDELITY</label>
+              <span class="stat-num" id="fidnum">100%</span>
+            </div>
+            <div class="bar-container" id="fidbar">
+              <div class="bar-fill" style="width: 100%;"></div>
+            </div>
+            <span class="stat-desc">Text integrity &amp; contextual meaning</span>
+          </div>
+
+          <!-- Stat 2: Reach -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <label>AUDIENCE REACH</label>
+              <span class="stat-num" id="reachnum">1</span>
+            </div>
+            <div class="bar-container" id="reachbar">
+              <div class="bar-fill" style="width: 2%;"></div>
+            </div>
+            <span class="stat-desc">Scale of message propagation</span>
+          </div>
+
+          <!-- Stat 3: Author -->
+          <div class="stat-card author-card" id="authstat">
+            <div class="stat-header">
+              <label>ORIGINATION</label>
+              <span class="stat-num" id="authnum">Human</span>
+            </div>
+            <div class="author-light-container">
+              <span class="indicator-dot green" id="authindicator"></span>
+              <span class="stat-desc" id="authdesc">Embodied human consciousness</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Game Console -->
+      <div class="game-console">
+        <!-- Character Guide Banner -->
+        <div class="character-card glass-subpanel" id="characterCard">
+          <img src="saima.png" class="char-avatar" id="charAvatar" alt="Character Avatar">
+          <div class="char-info">
+            <h4 class="char-name" id="charName">Character Name</h4>
+            <p class="char-dialogue" id="charDialogue">Dialogue text...</p>
+          </div>
+        </div>
+
+        <!-- Interactive Game Viewport (Draw canvases & interactive elements here) -->
+        <div class="viewport-wrapper">
+          <div class="viewport-title" id="viewportTitle">The Memory Weaver</div>
+          <div class="game-viewport" id="gameViewport">
+            <!-- Dynamically injected visual game elements -->
+          </div>
+        </div>
+
+        <!-- The Message Visualizer Frame -->
+        <div class="messageframe game-message-frame">
+          <div class="mflabel">
+            <span>State of the Message in your Sensorium</span>
+            <span class="auth" id="authflag">Author: human</span>
+          </div>
+          <div id="headline" class="message-headline"></div>
+          <div id="messageText" class="message-body"></div>
+        </div>
+
+        <!-- Narrative & Stage Controller Panel -->
+        <div class="control-panel">
+          <h2 id="roundtitle">The Council Fire</h2>
+          <p class="prompt" id="roundprompt">No writing exists. The message survives only if minds can hold it. Catch the floating song-words to weave Saima's message before they slip into the dark.</p>
+          
+          <!-- Choices list (for setups or text inputs) -->
+          <div class="opts" id="opts"></div>
+
+          <!-- Output Feedback -->
+          <div class="outcome" id="outcome"></div>
+
+          <!-- Proceed Row -->
+          <div class="nextrow" id="nextrow">
+            <button class="btn" id="nextbtn" onclick="advance()">CONTINUE COGNITIVE JOURNEY &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SCREEN 3: FINALE SCREEN
+         ========================================== -->
+    <section class="screen" id="finaleScreen">
+      <p class="eyebrow">The Journey's End</p>
+      <h2 id="endtitle">The Word, Still Circulating</h2>
+      
+      <div class="messageframe final-message" style="display: flex; gap: 20px; align-items: center;">
+        <img src="saima.png" class="char-avatar" id="endAvatar" alt="Final Author" style="width: 80px; height: 80px;">
+        <div style="flex-grow: 1;">
+          <div class="mflabel" id="endauth">AUTHOR: NONE &middot; words stand behind no one</div>
+          <div class="message-body" id="endmessage"></div>
+        </div>
+      </div>
+
+      <div class="scoreline">
+        <div class="score-card">
+          <span class="label">FINAL FIDELITY</span>
+          <span class="val" id="endfid">85%</span>
+        </div>
+        <div class="score-card">
+          <span class="label">FINAL REACH</span>
+          <span class="val" id="endreach">45M</span>
+        </div>
+        <div class="score-card">
+          <span class="label">ORIGINATION</span>
+          <span class="val" id="endauthor">None</span>
+        </div>
+      </div>
+
+      <p class="thesis" id="endthesis">The message arrived worn. That wearing is what every medium has always charged for carriage.</p>
+      
+      <div class="thesis" style="border-color:#a78bfa; background:rgba(167,139,250,0.04)">
+        For four rounds, this simulation taught you to protect <em>fidelity</em> (the exact wording). The final round revealed a variable you were never shown: <em>origination</em>. When algorithms can produce the symbolic environment itself, a message can be word-perfect and authored by no one. What this offloading does to humanistic agency, and to the student sensorium, is the core question this research pursues.
+      </div>
+
+      <div class="navrow">
+        <button class="btn" onclick="go('deepScreen','end')">GO DEEPER: THE RESEARCH FRAMEWORK &rarr;</button>
+        <button class="btn ghost" onclick="location.reload()">CARRY THE WORD AGAIN</button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SCREEN 4: DEEP DIVE & ACADEMIC SANDBOX
+         ========================================== -->
+    <section class="screen" id="deepScreen">
+      <p class="eyebrow">Theoretical Deep Dive</p>
+      <h2>Five Phases of the Technologized Word</h2>
+      
+      <div class="tablescroll">
+        <table class="summary">
+          <thead>
+            <tr>
+              <th>Phase</th>
+              <th>Core Technology</th>
+              <th>Media Environment</th>
+              <th>Human Role</th>
+              <th>Cognitive Consequence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Primary Orality</td>
+              <td>Voice (Sound)</td>
+              <td>Ephemeral, face-to-face, localized</td>
+              <td>Sole creators, active dialogue</td>
+              <td>Situational, formulaic, communal mind</td>
+            </tr>
+            <tr>
+              <td>Literacy &amp; Print</td>
+              <td>Writing / Printing press</td>
+              <td>Durable, spatialized, distanced</td>
+              <td>Sole creators, individual reader</td>
+              <td>Abstract, linear, individual interiority</td>
+            </tr>
+            <tr>
+              <td>Secondary Orality</td>
+              <td>Electronic broadcast (TV/Radio)</td>
+              <td>Immediate, mass-mediated, centralized</td>
+              <td>Sole creators, mass passive audience</td>
+              <td>Scripted spontaneity, broadcast unity</td>
+            </tr>
+            <tr>
+              <td>Algorithmic Secondary</td>
+              <td>Social feeds &amp; recommendation feeds</td>
+              <td>Curated, polarized, commodified</td>
+              <td>Creators; sorting delegated to machines</td>
+              <td>Hyper-reactive, fragmented filter bubbles</td>
+            </tr>
+            <tr>
+              <td>Tertiary Algorithmicity</td>
+              <td>Generative AI (LLMs)</td>
+              <td>Synthetic, saturated, instant</td>
+              <td>Prompters/Editors; creation delegated</td>
+              <td>The Great Bypass: offloaded cognitive synthesis</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Interactive sorting game: Keeper of the Word Sort -->
+      <div class="sortcard glass-panel">
+        <div class="sort-header">
+          <h3>Interactive Sandbox Quiz: Match the Scenario</h3>
+          <span class="counter" id="sortcounter">SCENARIO 1 OF 10</span>
+        </div>
+        <p class="scenario" id="scenariotext">Loading scenario...</p>
+        <div class="phasebtns" id="phasebtns">
+          <!-- Option buttons injected by JS -->
+        </div>
+        <div class="sortfeedback" id="sortfeedback"></div>
+        <div class="scorebar-container">
+          <div class="scorebar" id="scorebar">SCORE: 0 / 0</div>
+          <button class="btn btn-glow" id="sortnext" onclick="nextScenario()" style="display:none">NEXT SCENARIO &rarr;</button>
+        </div>
+      </div>
+
+      <div class="navrow">
+        <button class="btn ghost" onclick="location.reload()">BACK TO TITLE SCREEN</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
