@@ -6,6 +6,7 @@
 /* ---------- particle engine: five environments ---------- */
 const cv=document.getElementById('fx'), cx=cv.getContext('2d');
 let W,H,parts=[],mode='ember';
+const conferenceRequested=new URLSearchParams(location.search).get('conference')==='1';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
 resize(); addEventListener('resize',resize);
@@ -19,7 +20,9 @@ function spawn(){
   if(mode==='glyph') return {x:rnd(0,W), y:-14, vx:0, vy:rnd(1.2,3.2), g:GLYPHS[Math.floor(Math.random()*GLYPHS.length)], size:rnd(9,15), life:1, decay:rnd(.002,.005), teal:Math.random()<.35};
   return null;
 }
-const density={ember:90,dust:70,static:140,blip:46,glyph:80};
+const density=conferenceRequested
+  ? {ember:24,dust:20,static:32,blip:16,glyph:24}
+  : {ember:90,dust:70,static:140,blip:46,glyph:80};
 function tick(){
   cx.clearRect(0,0,W,H);
   if(!reduced){
@@ -132,6 +135,7 @@ const S={
   words:["The","river","always","returns","to","collect","what","it","has","lent.","Carry","the","children","high,","and","speak","no","word","you","will","not","stand","behind."],
   lost:new Set(), muts:{}, truncated:false, headline:null, round:0
 };
+let conferenceMode=false;
 function fmtReach(n){return n>=1e6?(n/1e6).toFixed(1)+"M":n>=1e3?(n/1e3).toFixed(0)+"k":n;}
 function reachPct(){return Math.max(2,Math.min(100,Math.log10(S.reach+1)/8*100));}
 function renderHUD(){
@@ -230,12 +234,14 @@ const rounds=[
 
 /* ---------- flow ---------- */
 function startGame(){
+  conferenceMode=false;
   S.round=0; p5done=false;
   transition("The age of the voice",()=>{go('game','p0','ember');showRound();});
 }
 function startConferenceMode(){
-  S.round=4; p5done=false;
-  transition("The age of the machine",()=>{go('game','p4','glyph');showRound();});
+  conferenceMode=true;
+  S.round=0; p5done=false;
+  transition("Five stages in ninety seconds",()=>{go('game','p0','ember');showRound();});
 }
 function go(id,env,fxmode){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -248,7 +254,9 @@ function transition(label,then){
   const w=document.getElementById('wipe');
   document.getElementById('wipetext').textContent=label;
   w.classList.add('on');
-  setTimeout(()=>{then();setTimeout(()=>w.classList.remove('on'),350);},700);
+  const enterDelay=conferenceMode?250:700;
+  const exitDelay=conferenceMode?150:350;
+  setTimeout(()=>{then();setTimeout(()=>w.classList.remove('on'),exitDelay);},enterDelay);
 }
 function showRound(){
   renderHUD();renderMessage();
@@ -258,7 +266,7 @@ function showRound(){
     const r=rounds[S.round];
     setEnv(r.env,r.fx); amb(r.env);
     document.getElementById('phasechip').textContent=r.chip;
-    document.getElementById('roundeyebrow').textContent="Round "+(S.round+1)+" of 5";
+    document.getElementById('roundeyebrow').textContent=(conferenceMode?"90-second journey · Stage ":"Round ")+(S.round+1)+" of 5";
     document.getElementById('roundtitle').textContent=r.title;
     document.getElementById('roundprompt').textContent=r.prompt;
     const wrap=document.getElementById('opts');
@@ -418,3 +426,7 @@ function answerSort(idx,btn){
   else document.getElementById('sortfeedback').innerHTML+=`<br><br><b>Final: ${score} of ${scenarios.length}.</b> The boundary cases are hard by design — the line between phases is the argument.`;
 }
 function nextScenario(){si++;showScenario();}
+
+if(conferenceRequested){
+  startConferenceMode();
+}

@@ -42,7 +42,7 @@ After completing the game, players can review a comparative table outlining the 
 3. Toggle the **SOUND ON** button in the top right to enable real-time synthesized soundscapes.
 4. Press `F11` to enter fullscreen mode for the best presentation experience.
 
-Use **90-Second Conference Mode** to jump directly to Phase V and the origination reveal. Use **Full Five-Phase Journey** to make consequential decisions about fidelity, reach, presence, circulation, and origination across all five phases.
+Use **90-Second Five-Stage Journey** for a rapid conference walkthrough of all five transformations. Links using `?conference=1` launch this mode automatically. Use **Full Five-Phase Journey** for a slower standalone experience.
 
 ## References
 
