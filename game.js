@@ -340,10 +340,12 @@ function resolveP5(pickedHuman,btn,wrap){
   } else {
     if(btn)btn.classList.add('wrong');
     S.human=false; cue('bad');
-    if(pickedHuman===false && btn && btn.textContent.includes("river always returns")){S.fid=100;}
+    const selectedPerfectCopy=pickedHuman===false && btn && btn.textContent.includes("river always returns");
     out=pickedHuman===null
       ? "<b>Time ran out.</b> The synthetic versions enter the record by default \u2014 saturation doesn't need your permission. The message survives, word-perfect, and no one wrote it."
-      : "<b>You chose a perfect copy.</b> Fidelity: flawless. Origination: none. For four rounds this game trained you to protect the words \u2014 and the words were never the thing most at risk.";
+      : selectedPerfectCopy
+        ? `<b>You chose a perfect synthetic copy.</b> Selected-copy fidelity: 100%. Carried-message fidelity: ${S.fid}%. Origination: none. The copy is flawless, but it does not erase what the message gained and lost across the earlier media transformations.`
+        : `<b>You chose a synthetic retelling.</b> Carried-message fidelity: ${S.fid}%. Origination: none. Fluency and fidelity are no longer reliable evidence that anyone stands behind the words.`;
     [...wrap.children].find(c=>c.querySelector('.vt.h')).classList.add('right');
   }
   renderHUD();

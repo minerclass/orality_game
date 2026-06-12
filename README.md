@@ -44,6 +44,8 @@ After completing the game, players can review a comparative table outlining the 
 
 Use **90-Second Five-Stage Journey** for a rapid conference walkthrough of all five transformations. Links using `?conference=1` launch this mode automatically. Use **Full Five-Phase Journey** for a slower standalone experience.
 
+The finale reports **carried fidelity**, which accumulates the gains and losses produced by choices across the journey. A word-perfect synthetic copy may have 100% selected-copy fidelity, but it no longer overwrites the carried-message score.
+
 ## References
 
 * Ong, Walter J. (1982). *Orality and Literacy: The Technologizing of the Word*.
