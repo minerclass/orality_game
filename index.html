@@ -213,6 +213,10 @@
     <button class="btn" onclick="startConferenceMode()">90-second five-stage journey &rarr;</button>
     <button class="btn ghost" onclick="startGame()">Full five-phase journey</button>
   </div>
+  <div style="margin-top: 15px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;">
+    <input type="checkbox" id="untimedMode" onchange="toggleUntimed(this.checked)" style="width: 16px; height: 16px; cursor: pointer;">
+    <label for="untimedMode" style="font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--dim); cursor: pointer; user-select: none;">Untimed Mode (WCAG Accessibility)</label>
+  </div>
   <p class="credit">Phases I&ndash;III after Walter J. Ong (1982), <em>Orality and Literacy</em>. Phases IV&ndash;V proposed by Micah J. Miner, <em>Beyond Secondary Orality: Tertiary Algorithmicity &amp; Pedagogical Friction</em>.</p>
 </section>
 
@@ -258,6 +262,7 @@
     <div>FINAL REACH<b id="endreach"></b></div>
     <div>ORIGINATION<b id="endauthor"></b></div>
   </div>
+  <p style="font-size: 0.8rem; color: var(--dim); text-align: center; margin-top: 10px; font-style: italic;">*Note: All scores and calibrations are illustrative simulations for pedagogical training and have not been statistically validated.</p>
   <p class="thesis" id="endthesis"></p>
   <p class="thesis" style="border-color:#a78bfa">For four rounds, this simulation taught you to protect <em>fidelity</em> &mdash; the exact wording. The final round revealed a variable you were never shown: <em>origination</em>. When algorithms can produce the symbolic environment itself, a message can be word-perfect and authored by no one. What this condition does to humanistic agency, and to the student sensorium, is an open empirical question &mdash; the core question this research pursues.</p>
   <div class="navrow">

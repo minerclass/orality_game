@@ -29,7 +29,7 @@ function tick(){
     while(parts.length<density[mode])parts.push(spawn());
     parts=parts.filter(p=>p.life>0 && p.y>-30 && p.y<H+30);
     for(const p of parts){
-      p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
+      p.x+=p.vx; p.y+=p.vy; p.life=Math.max(0, p.life-p.decay);
       if(mode==='ember'){
         cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);
         cx.fillStyle=`hsla(${p.hue},85%,60%,${p.life*.7})`;
@@ -129,9 +129,13 @@ function toggleSound(){
   if(soundOn)amb(document.body.dataset.env); else stopAmb();
 }
 
+function toggleUntimed(checked){
+  S.untimed=checked;
+}
+
 /* ---------- game state ---------- */
 const S={
-  fid:100, reach:1, human:true,
+  fid:100, reach:1, human:true, untimed:false,
   words:["The","river","always","returns","to","collect","what","it","has","lent.","Carry","the","children","high,","and","speak","no","word","you","will","not","stand","behind."],
   lost:new Set(), muts:{}, truncated:false, headline:null, round:0
 };
@@ -322,12 +326,16 @@ function startPhase5(){
   clock=10;
   const ce=document.getElementById('clock');
   ce.textContent=clock; ce.classList.remove('urgent');
-  clockTimer=setInterval(()=>{
-    clock--; ce.textContent=Math.max(0,clock);
-    if(clock<=3)ce.classList.add('urgent');
-    if(clock<=3&&clock>0)cue('choose');
-    if(clock<=0)resolveP5(null,null,wrap);
-  },1000);
+  if(S.untimed){
+    document.getElementById('clock').parentElement.innerHTML='FIND THE HUMAN &mdash; <b id="clock">Untimed Mode Active</b>';
+  } else {
+    clockTimer=setInterval(()=>{
+      clock--; ce.textContent=Math.max(0,clock);
+      if(clock<=3)ce.classList.add('urgent');
+      if(clock<=3&&clock>0)cue('choose');
+      if(clock<=0)resolveP5(null,null,wrap);
+    },1000);
+  }
 }
 function resolveP5(pickedHuman,btn,wrap){
   if(p5done)return; p5done=true;
