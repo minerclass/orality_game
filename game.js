@@ -382,10 +382,28 @@ function showFinale(){
   const ea=document.getElementById('endauthor');
   ea.textContent=S.human?"Human":"None";
   ea.className=S.human?"good":"bad";
-  document.getElementById('endthesis').innerHTML=
-    S.fid>=80
-    ? "You protected the words well. Across three of Ong's phases and into the algorithmic ones, every transformation of the medium forced a trade \u2014 memory against detail, permanence against presence, reach against wholeness."
-    : "The message arrived worn \u2014 words lost to memory, scribes, soundbites, and headlines. That wearing is not failure; it is what every medium has always charged for carriage.";
+  let quadrantTitle = "";
+  let quadrantDesc = "";
+  const isHighReach = S.reach >= 100000;
+  const isHighFidelity = S.fid >= 75;
+  if (isHighReach && isHighFidelity) {
+    quadrantTitle = "🏆 Quadrant: The Living Archive (High Reach &times; High Fidelity)";
+    quadrantDesc = "Outstanding calibration! You navigated the transformations of the word to achieve mass propagation while preserving the integrity and context of Saima's message. You proved that the word can be scaled without being completely hollowed out.";
+  } else if (isHighReach && !isHighFidelity) {
+    quadrantTitle = "⚠️ Quadrant: The Telephone Trap (High Reach &times; Low Fidelity)";
+    quadrantDesc = "Your message reached millions, but Saima's true warning was lost in transmission. By prioritizing scale through soundbites and algorithmic optimization, you allowed the text to fragment, showing how mass circulation often charges the price of meaning.";
+  } else if (!isHighReach && isHighFidelity) {
+    quadrantTitle = "🔒 Quadrant: The Whispering Gallery (Low Reach &times; High Fidelity)";
+    quadrantDesc = "You successfully protected the absolute purity of the text. Saima's words remain complete and untainted, but only within a tiny, insular circle. You avoided the traps of mass media by keeping the word safe, but silent to the world.";
+  } else {
+    quadrantTitle = "💨 Quadrant: The Silent Dust (Low Reach &times; Low Fidelity)";
+    quadrantDesc = "A double loss. The message failed to scale, and the text itself was heavily mutated or forgotten. This outcome represents a complete collapse of transmission under the pressure of the changing media sensorium.";
+  }
+  document.getElementById('endthesis').innerHTML = `
+    <h3 style="font-family: Georgia, serif; font-size: 1.25rem; color: var(--accent); margin-bottom: 8px;">${quadrantTitle}</h3>
+    <p style="margin-bottom: 12px;">${quadrantDesc}</p>
+    <p>${S.fid >= 75 ? "You protected the words well. Across three of Ong's phases and into the algorithmic ones, every transformation of the medium forced a trade &mdash; memory against detail, permanence against presence, reach against wholeness." : "The message arrived worn &mdash; words lost to memory, scribes, soundbites, and headlines. That wearing is not failure; it is what every medium has always charged for carriage."}</p>
+  `;
 }
 
 /* ---------- deep dive: phase sort quiz ---------- */
