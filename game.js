@@ -387,16 +387,16 @@ function showFinale(){
   const isHighReach = S.reach >= 100000;
   const isHighFidelity = S.fid >= 75;
   if (isHighReach && isHighFidelity) {
-    quadrantTitle = "🏆 Quadrant: The Living Archive (High Reach &times; High Fidelity)";
+    quadrantTitle = "Quadrant: The Living Archive (High Reach &times; High Fidelity)";
     quadrantDesc = "Outstanding calibration! You navigated the transformations of the word to achieve mass propagation while preserving the integrity and context of Saima's message. You proved that the word can be scaled without being completely hollowed out.";
   } else if (isHighReach && !isHighFidelity) {
-    quadrantTitle = "⚠️ Quadrant: The Telephone Trap (High Reach &times; Low Fidelity)";
+    quadrantTitle = "Quadrant: The Telephone Trap (High Reach &times; Low Fidelity)";
     quadrantDesc = "Your message reached millions, but Saima's true warning was lost in transmission. By prioritizing scale through soundbites and algorithmic optimization, you allowed the text to fragment, showing how mass circulation often charges the price of meaning.";
   } else if (!isHighReach && isHighFidelity) {
-    quadrantTitle = "🔒 Quadrant: The Whispering Gallery (Low Reach &times; High Fidelity)";
+    quadrantTitle = "Quadrant: The Whispering Gallery (Low Reach &times; High Fidelity)";
     quadrantDesc = "You successfully protected the absolute purity of the text. Saima's words remain complete and untainted, but only within a tiny, insular circle. You avoided the traps of mass media by keeping the word safe, but silent to the world.";
   } else {
-    quadrantTitle = "💨 Quadrant: The Silent Dust (Low Reach &times; Low Fidelity)";
+    quadrantTitle = "Quadrant: The Silent Dust (Low Reach &times; Low Fidelity)";
     quadrantDesc = "A double loss. The message failed to scale, and the text itself was heavily mutated or forgotten. This outcome represents a complete collapse of transmission under the pressure of the changing media sensorium.";
   }
   document.getElementById('endthesis').innerHTML = `
