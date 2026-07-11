@@ -145,8 +145,12 @@ function reachPct(){return Math.max(2,Math.min(100,Math.log10(S.reach+1)/8*100))
 function renderHUD(){
   document.getElementById('fidnum').textContent=S.fid;
   document.querySelector('#fidbar i').style.width=S.fid+"%";
+  document.getElementById('fidbar').setAttribute('aria-valuenow', S.fid);
+  document.getElementById('fidbar').setAttribute('aria-valuetext', 'Message Fidelity: '+S.fid+' percent');
   document.getElementById('reachnum').textContent=fmtReach(S.reach);
   document.querySelector('#reachbar i').style.width=reachPct()+"%";
+  document.getElementById('reachbar').setAttribute('aria-valuenow', Math.round(reachPct()));
+  document.getElementById('reachbar').setAttribute('aria-valuetext', 'Message Reach: '+fmtReach(S.reach));
   const flag=document.getElementById('authflag');
   const os=document.getElementById('origstat');
   if(S.human){
