@@ -4,9 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Keeper of the Word: The Shifting Sensorium</title>
+<link rel="stylesheet" href="https://minerclass.github.io/tokens.css">
 <style>
   :root{
-    --text:#ece7dd; --dim:#98927f;
+    /* The ground animates between sensorium stages (see the 1.6s background
+       transition on body), which is the game's core signal, so it stays local.
+       Only the text joins the shared ink. */
+    --text:var(--mjm-ink,#ece7dd); --dim:var(--mjm-muted,#98927f);
+    --mjm-accent:var(--mjm-rust,#e8a04c);
     --good:#8fd48f; --bad:#e07a7a;
     --accent:#e8a04c;
     --panel:rgba(20,17,14,.78); --line:#3a352c;
@@ -168,7 +173,9 @@
   .scoreline div b.good{color:var(--good);text-shadow:0 0 16px rgba(143,212,143,.4)}
   .thesis{border-left:2px solid var(--accent);padding-left:15px;margin:24px 0;font-size:15.5px;line-height:1.7;color:var(--dim);max-width:60ch}
   .thesis em{color:var(--text)}
-  .credit{margin-top:32px;font-size:12.5px;color:#6f6a61;line-height:1.65}
+  /* Was a hardcoded #6f6a61, measuring 2.40 against the ground. Uses the dim
+     token instead, which now resolves to the shared muted ink at 8.67. */
+  .credit{margin-top:32px;font-size:12.5px;color:var(--dim);line-height:1.65}
   .navrow{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
 
   table.summary{width:100%;border-collapse:collapse;margin-top:20px;font-size:13px}
