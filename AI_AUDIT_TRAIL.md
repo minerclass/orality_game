@@ -2,7 +2,7 @@
 
 **Date of Log**: 2026-07-07
 **Researcher / Author**: Micah J. Miner (assisted by Antigravity)
-**Project Context**: Qualitative-dominant convergent mixed-methods case study on *Pedagogical Friction* in generative AI age.
+**Project Context**: Qualitative-dominant convergent mixed-methods study on *Pedagogical Friction* in the generative AI age. (Corrected 2026-09-01: this header previously read "case study". The controlling proposal is not a case study; the inherited label was wrong and is not used in this repository.)
 **Audit Purpose**: Hand-off review, reconciliation, and audit logs for Codex / Claude Code / Antigravity agents.
 
 ---
